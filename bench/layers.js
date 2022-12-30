@@ -14,7 +14,7 @@ import Table from 'cli-table';
 
 const BATCHED = true;
 const RUNS_PER_TIER = 150;
-const LAYER_TIERS = [10, 100, 500, 1000, 2000];
+const LAYER_TIERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 500, 1000, 2000];
 
 const med = (array) =>
   array.sort((a, b) => (a - b < 0 ? 1 : -1))[Math.floor(array.length / 2)] || 0;
@@ -47,6 +47,7 @@ async function main() {
 
   for (const lib of Object.keys(report)) {
     const current = report[lib];
+    let total = 0;
 
     for (let i = 0; i < LAYER_TIERS.length; i += 1) {
       let layers = LAYER_TIERS[i];
@@ -59,14 +60,16 @@ async function main() {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       current.runs[i] = med(runs) * 1000;
+      total += current.runs[i];
     }
+    current.runs.push(total);
   }
 
   const table = new Table({
-    head: ['', ...LAYER_TIERS.map((n) => kleur.bold(kleur.cyan(n)))],
+    head: ['', ...LAYER_TIERS.map((n) => kleur.bold(kleur.cyan(n))), kleur.magenta('total')],
   });
 
-  for (let i = 0; i < LAYER_TIERS.length; i += 1) {
+  for (let i = 0; i < LAYER_TIERS.length + 1; i += 1) {
     let min = Infinity,
       max = -1,
       fastestLib,
@@ -140,6 +143,8 @@ function runMaverick(layers, done) {
     const endTime = performance.now() - startTime;
 
     dispose();
+
+    SOLUTIONS[layers] = solution;
     done(isSolution(layers, solution) ? endTime : -1);
   });
 }
