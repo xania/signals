@@ -14,7 +14,7 @@ import Table from 'cli-table';
 
 const BATCHED = true;
 const RUNS_PER_TIER = 150;
-const LAYER_TIERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 500, 1000, 2000];
+const LAYER_TIERS = [10, 100, 500, 1000, 2000];
 
 const med = (array) =>
   array.sort((a, b) => (a - b < 0 ? 1 : -1))[Math.floor(array.length / 2)] || 0;
